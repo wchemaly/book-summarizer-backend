@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import fitz  # PyMuPDF
 
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
@@ -15,22 +16,23 @@ def upload_file():
         return jsonify({"error": "Empty filename"}), 400
 
     try:
-        # Read PDF and extract text
+        # Read and extract text from the uploaded PDF file
         doc = fitz.open(stream=file.read(), filetype="pdf")
         text = ""
         for page in doc:
             text += page.get_text()
 
+        # Return a short excerpt to verify
         return jsonify({
             "message": "File processed successfully.",
-            "excerpt": text[:500]  # Just first 500 characters for now
+            "excerpt": text[:500]  # First 500 characters
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @app.route("/")
 def home():
-    return "Backend is live!"
+    return "✅ Backend is live and running!"
 
 if __name__ == "__main__":
     import os
